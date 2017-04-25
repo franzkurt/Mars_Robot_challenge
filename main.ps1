@@ -45,7 +45,7 @@ for($i=1; $i -le $RoverNumbers; $i++)
       # UP
       if($Orientation -eq 'N')
       {
-        if($PositionY -ne $LimitY)
+        if($PositionY -lt $LimitY)
         {
           $PositionY += 1;
         }
@@ -53,7 +53,7 @@ for($i=1; $i -le $RoverNumbers; $i++)
       # RIGTH
       elseif($Orientation -eq 'E')
       {
-        if($PositionY -ne $LimitX)
+        if($PositionY -lt $LimitX)
         {
           $PositionX += 1;
         }
@@ -61,7 +61,7 @@ for($i=1; $i -le $RoverNumbers; $i++)
       # DOWN
       elseif($Orientation -eq 'S')
       {
-        if($PositionY -ne 0)
+        if($PositionY -gt 0)
         {
           $PositionY -= 1;
         }
@@ -69,7 +69,7 @@ for($i=1; $i -le $RoverNumbers; $i++)
       # LEFT
       elseif($Orientation -eq 'W')
       {
-        if($PositionX -ne 0)
+        if($PositionX -gt 0)
         {
           $PositionX -= 1;
         }
@@ -90,11 +90,12 @@ for($i=1; $i -le $RoverNumbers; $i++)
       # Validation of '$Letter' is case sensitive so 'n' is not equal 'N'
       if(($Letter -eq 'R') -or ($Letter -eq 'L'))
       {
+        # Change the orientation of rover using a circle array
+        # Each command can change the orientation in 90 degrees only, not more
         if($Letter -eq 'R')
         {
-          # Change the orientation of rover using a circle array
           # MAX INDEX 3, -lt (lower than)
-          if($CurrentOrientationIndex -lt 3)
+          if($CurrentOrientationIndex -lt 4)
           {
             $NextIndex = $CurrentOrientationIndex+1
           }
@@ -126,6 +127,7 @@ for($i=1; $i -le $RoverNumbers; $i++)
         "Invalid orientation can not be set with letter [$Letter]"
       }
     }
+      "$StringCommand`nM -> $Orientation"
     # Store the final position of the rover on matrix followed by the orientation
     $FinalPosition = "$PositionX $PositionY $Orientation"
     # Put result on a file named Output.txt
