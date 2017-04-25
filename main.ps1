@@ -39,7 +39,6 @@ for($i=1; $i -le $RoverNumbers; $i++)
   # Interpreting the command string
   Foreach($Letter in $StringCommand[0..$StringCommand.Length])
   {
-    $Letter |out-host
     # Move over matrix
     if($Letter -eq 'M')
     {
@@ -86,20 +85,40 @@ for($i=1; $i -le $RoverNumbers; $i++)
     {
       # Array to set the new orientation
       $CardinalPoints = ('N','E','S','W')
-      # Array to validate the input command letter
-      $ValidRotation = ('R','L')
-      # Validation is case sensitive so 'n' is not equal 'N'
-      if($ValidRotation.Contains($Letter))
+      # Get current orientation like pivot on $CardinalPoints array
+      $CurrentOrientationIndex = $CardinalPoints.Indexof($Orientation)
+      # Validation of '$Letter' is case sensitive so 'n' is not equal 'N'
+      if(($Letter -eq 'R') -or ($Letter -eq 'L'))
       {
         if($Letter -eq 'R')
         {
-          # Change the orientation of rover
-          $Orientation =
+          # Change the orientation of rover using a circle array
+          # MAX INDEX 3, -lt (lower than)
+          if($CurrentOrientationIndex -lt 3)
+          {
+            $NextIndex = $CurrentOrientationIndex+1
+          }
+          # RETURN TO INDEX 0
+          else
+          {
+            $NextIndex = 0
+          }
         }
+        # $Letter equal 'L'
         else
         {
-
+          # MIN INDEX 0. -gt (greater than)
+          if($CurrentOrientationIndex -gt 0)
+          {
+            $NextIndex = $CurrentOrientationIndex-1
+          }
+          # RETURN TO INDEX 3
+          else
+          {
+            $NextIndex = 3
+          }
         }
+        $Orientation = $CardinalPoints[$NextIndex]
       }
       else
       {
@@ -108,8 +127,9 @@ for($i=1; $i -le $RoverNumbers; $i++)
       }
     }
     # Store the final position of the rover on matrix followed by the orientation
-    $FinalPosition = $PositionX + ' ' + $PositionY + ' ' + $Orientation
+    $FinalPosition = "$PositionX $PositionY $Orientation"
     # Put result on a file named Output.txt
     $FinalPosition | Add-Content Output.txt
   }
+  $FinalPosition|out-host
 }
