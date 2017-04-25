@@ -1,4 +1,3 @@
-# mars-rover
 # Call only the executable path.
 # It script not accept any argument for hour
 if($args.Length -ne 0)
@@ -79,18 +78,28 @@ for($i=1; $i -le $RoverNumbers; $i++)
       # If first set of orientation was invalid, enter here
       else
       {
-        "Orientation is not valid"
+        "Orientation is not valid to move"
       }
     }
     # Set a new orientation
     else
     {
-      $ValidOrientation = ('N','E','S','L')
+      # Array to set the new orientation
+      $CardinalPoints = ('N','E','S','W')
+      # Array to validate the input command letter
+      $ValidRotation = ('R','L')
       # Validation is case sensitive so 'n' is not equal 'N'
-      if($ValidOrientation.Contains($Letter))
+      if($ValidRotation.Contains($Letter))
       {
-        # Change the orientation of rover
-        $Orientation = $Letter
+        if($Letter -eq 'R')
+        {
+          # Change the orientation of rover
+          $Orientation =
+        }
+        else
+        {
+
+        }
       }
       else
       {
