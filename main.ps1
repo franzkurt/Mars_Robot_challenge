@@ -1,33 +1,47 @@
-# Call only the executable path.
 # It script not accept any argument for hour
 if($args.Length -ne 0)
-  {
-    "Number of arguments > 0 but this script doesn't accept args"
-    exit
-  }
+{
+  "Number of arguments > 0 but this script doesn't accept args"
+  exit
+}
+
+# Search for a Input file in the same folder
 $InputPath = 'Input.txt'
 if(-Not (Test-Path $InputPath))
 {
   "Cannot find the path: $InputPath. Exiting the application"
   exit
 }
-# Retrieve the content from file filtering out empty lines
+
+# Retrieve the content of an input file filtering out empty lines
 $Content = Get-Content $InputPath | Where {($_ -ne '')}
-# Split the first lines in tokens using spaces
+if($Content -eq $Null)
+{
+  "Cannot retrieve the content from path: $InputPath. Exiting the application"
+  exit
+}
+
+# Split the first line of content in tokens
 $Limits = $Content[0].Split(' ')
-# Use base 10 to convert a string to integer
+# Use base 10 to convert a string to an integer and set the limits of matrix
+# MAXIMUM Y
 [int]$LimitY = ([convert]::ToInt32($Limits[0], 10))
+# MAXIMUM X
 [int]$LimitX = ([convert]::ToInt32($Limits[1], 10))
 
-# Set the number of rovers in the Mars plateau. In this case is two
+# Set the number of rovers in the Mars plateau.
+# In this case is two
 $RoverNumbers = 2
-# Execute the positioning and command string to each one
+
+# Set the first position and run the command string to each one of rovers
 for($i=1; $i -le $RoverNumbers; $i++)
 {
-  # Get position and orientation line (Even lines)
+  # $i is the index of rover
+  # Get position and orientation line split in tokens (Even lines)
   $InitPositions = $Content[($i*2)-1].Split(' ')
 
   # Store Initial Position in X and Y axis
+  # To increment or decrement a position is necessary convert it to an integer
   [int]$PositionX = ([convert]::ToInt32($InitPositions[0], 10))
   [int]$PositionY = ([convert]::ToInt32($InitPositions[1], 10))
   # Store the initial position
@@ -35,7 +49,7 @@ for($i=1; $i -le $RoverNumbers; $i++)
 
   # Get command line (Odd lines)
   $StringCommand = $Content[$i*2]
-  # Interpreting the command string
+  # Interpreting the command string like an array of char
   Foreach($Letter in $StringCommand[0..$StringCommand.Length])
   {
     # Move over matrix
@@ -76,7 +90,7 @@ for($i=1; $i -le $RoverNumbers; $i++)
       # If first set of orientation was invalid, enter here
       else
       {
-        "Orientation is not valid to move"
+        "Orientation: $Orientation is not valid to move. The rover will not move."
       }
     }
     # Set a new orientation
@@ -89,10 +103,10 @@ for($i=1; $i -le $RoverNumbers; $i++)
       $CurrentOrientationIndex = $CardinalPoints.Indexof("$Orientation")
       if($CurrentOrientationIndex -eq (-1))
       {
-        "Index of orientation not found on cardinal points array"
+        "Index of orientation $Orientation was not found on cardinal points array"
         exit
       }
-      # Validation of '$Letter' is case sensitive so 'n' is not equal 'N'
+      # Validation of '$Letter' variable is case sensitive. So 'n' is not equal 'N' in comparison
       if(($Letter -eq 'R') -or ($Letter -eq 'L'))
       {
         # Pointer to the next orientation
@@ -136,7 +150,6 @@ for($i=1; $i -le $RoverNumbers; $i++)
     }
     # Store the final position of the rover on matrix followed by the orientation
     $FinalPosition = "$PositionX $PositionY $Orientation"
-    # Put result on a file named Output.txt
   }
   # Add the result like the content of Output.txt file
   $FinalPosition | Add-Content 'Output.txt'
